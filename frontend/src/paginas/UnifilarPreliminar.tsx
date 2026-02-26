@@ -24,11 +24,20 @@ export function UnifilarPreliminar() {
   const svg = gerarSvgUnifilar(projeto);
 
   return (
-    <div style={{ maxWidth: 1200, margin: "0 auto", padding: 16, fontFamily: "system-ui" }}>
-      <h1>Unifilar Preliminar</h1>
+    <div style={{ width: "100%", margin: "0 auto", padding: 20, fontFamily: "system-ui", boxSizing: "border-box" }}>
+      <h1 style={{ margin: 0 }}>Unifilar Preliminar</h1>
 
       <div
-        style={{ border: "1px solid #ddd", borderRadius: 8, padding: 12, overflow: "auto" }}
+        style={{
+          border: "1px solid #cbd5e1",
+          borderRadius: 10,
+          padding: 12,
+          overflow: "auto",
+          marginTop: 12,
+          background: "#ffffff",
+          width: "100%",
+          boxSizing: "border-box",
+        }}
         dangerouslySetInnerHTML={{ __html: svg }}
       />
 
