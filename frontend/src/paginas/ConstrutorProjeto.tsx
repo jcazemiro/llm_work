@@ -44,6 +44,12 @@ export function ConstrutorProjeto() {
     navigate(`/unifilar/${id}`);
   }
 
+  function irParaAssistenteIA() {
+    const id = crypto.randomUUID();
+    localStorage.setItem(`projeto:${id}`, JSON.stringify(projeto));
+    navigate(`/assistente/${id}`);
+  }
+
   return (
     <div style={{ maxWidth: 1160, margin: "0 auto", padding: 16, fontFamily: "system-ui" }}>
       <h1>Gerador de Diagramas (BESS)</h1>
@@ -190,6 +196,7 @@ export function ConstrutorProjeto() {
       <div style={{ display: "flex", gap: 10, marginTop: 16 }}>
         <button onClick={irParaBlocos}>Gerar diagrama de blocos</button>
         <button onClick={irParaUnifilar}>Gerar unifilar preliminar</button>
+        <button onClick={irParaAssistenteIA}>Analisar com Assistente IA</button>
       </div>
     </div>
   );
