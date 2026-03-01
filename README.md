@@ -48,6 +48,16 @@ Fluxo planejado:
 
 ---
 
+
+## 3.1) Mapa rápido para critérios do professor
+
+- **System prompt e prompting (18 pts):** arquivo versionado em `prompts/system_prompt.txt` com regras, saída JSON obrigatória e foco em rastreabilidade.
+- **Tools e integração (14 pts):** especificações em `tools/tool_specs.md` + implementação no front em `frontend/src/tools/engineTools.ts`.
+- **Parâmetros/modelo (10 pts):** seção de decisões no README com justificativas e plano de experimento.
+- **Arquitetura/framework (10 pts):** fluxo em `agents/fluxo.md` e descrição da orquestração LLM.
+- **README/documentação (10 pts):** estrutura orientada a problema, decisões, limites e próximos passos.
+- **Apresentação oral (8 pts):** use o resumo executivo da página `Assistente IA` como base do pitch.
+
 ## 4) Decisões de engenharia de LLM (proposta inicial)
 
 ## 4.1 Modelo

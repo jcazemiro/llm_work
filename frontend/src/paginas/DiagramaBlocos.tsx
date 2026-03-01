@@ -23,10 +23,11 @@ export function DiagramaBlocos() {
   const svg = gerarSvgBlocos(projeto);
 
   return (
-    <div style={{ maxWidth: 1200, margin: "0 auto", padding: 16, fontFamily: "system-ui" }}>
-      <h1>Diagrama de Blocos</h1>
+    <div style={{ width: "100%", margin: "0 auto", padding: 20, fontFamily: "system-ui", boxSizing: "border-box" }}>
+      <h1 style={{ margin: 0 }}>Diagrama de Blocos</h1>
+      <p style={{ color: "#475569", marginTop: 8 }}>Visão macro do sistema com fluxo funcional para apresentação e discussão técnica.</p>
 
-      <div style={{ border: "1px solid #ddd", borderRadius: 8, padding: 12, overflow: "auto" }}
+      <div style={{ border: "1px solid #cbd5e1", borderRadius: 10, padding: 12, overflow: "auto", background: "#fff" }}
         dangerouslySetInnerHTML={{ __html: svg }}
       />
 

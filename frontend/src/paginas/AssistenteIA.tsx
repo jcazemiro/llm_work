@@ -51,6 +51,16 @@ export function AssistenteIA() {
           <ul>
             {resposta.dados_faltantes.length ? resposta.dados_faltantes.map((item) => <li key={item}>{item}</li>) : <li>Nenhum dado faltante obrigatório.</li>}
           </ul>
+
+          <h4>Justificativa técnica</h4>
+          <ul>
+            {resposta.justificativa_tecnica.map((item) => <li key={item}>{item}</li>)}
+          </ul>
+
+          <h4>Prioridade de execução</h4>
+          <ul>
+            {resposta.prioridade_execucao.map((item) => <li key={item.item}>{item.item} — {item.prioridade}</li>)}
+          </ul>
         </section>
 
         <section style={{ border: "1px solid #cbd5e1", borderRadius: 10, padding: 12, background: "#fff" }}>
@@ -69,6 +79,8 @@ export function AssistenteIA() {
                 riscos: resposta.riscos,
                 dados_faltantes: resposta.dados_faltantes,
                 resumo_executivo: resposta.resumo_executivo,
+                justificativa_tecnica: resposta.justificativa_tecnica,
+                prioridade_execucao: resposta.prioridade_execucao,
               },
               null,
               2
