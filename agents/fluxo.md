@@ -1,4 +1,4 @@
-# Fluxo de agente — versão revisada para professor
+# Fluxo de agente — versão revisada
 
 ## Pipeline de execução
 1. Front-end envia `projeto` para `POST /api/assistente/analisar`.
