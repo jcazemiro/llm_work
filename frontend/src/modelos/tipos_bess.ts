@@ -16,7 +16,7 @@ export type TipoComponente =
 export interface ItemComponente {
   tipo: TipoComponente;
   quantidade: number;
-  params: Record<string, any>;
+  params: Record<string, string | number | null>;
 }
 
 export interface Projeto {
