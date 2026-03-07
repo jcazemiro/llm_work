@@ -1,7 +1,7 @@
-# Plano de melhoria para alcançar nota mínima (baseado na correção)
+# Plano de melhoria para uma entrega aceitável: uma análise conjunta de identificação de erros e aprendizados do universo que é a LLM. Aqui segue de forma colaborativa para identificar a estrutura básica, e seguir com as implementações para algo que planejo ser para além da disciplina.
 
-## Diagnóstico da correção do professor
-Pontuação atual: **70/100**. O principal gargalo está nos critérios de IA aplicada:
+## Diagnóstico da correção do professor:
+Pontuação atual: **70/100**. O principal gargalo está nos critérios de IA aplicada, algo que identifico com principal ponto de dificuldade pessoal.
 - System Prompt e Prompting: 6/18
 - Ferramentas (Tools): 3/14
 - Parâmetros do Modelo: 4/10
@@ -44,9 +44,9 @@ Pontuação atual: **70/100**. O principal gargalo está nos critérios de IA ap
 - Incluir passos de execução frontend/backend.
 - Documentar limitações e próximos experimentos.
 
-## Próximas ações recomendadas (antes da entrega final)
+## Próximas ações recomendadas (ainda antes da entrega final (08/03/2026))
 1. Conectar o frontend no endpoint backend em vez de executar assistente localmente.
 2. Adicionar 3 casos de teste (projeto válido, com alerta e com erro).
 3. Gravar evidências de execução (prints de JSON e tools).
-4. Preparar slide de 1 página com: problema, arquitetura, decisões de LLM, métricas.
-5. Ensaiar pitch de 3 minutos com foco em decisões de engenharia.
+4. Preparar slide de 1 página com: problema, arquitetura, decisões de LLM, métricas para uma entrega com mais valor.
+5. Pitch não será necessário, entretanto gostaria de pontuar que optei por me ausentar da ultima aula para trabalhar em cima de um resolução mais concreta.
