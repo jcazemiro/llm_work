@@ -1,4 +1,4 @@
-# Fluxo de agente — versão revisada para professor
+# Fluxo de agente — versão revisada
 
 ## Pipeline de execução
 1. Front-end envia `projeto` para `POST /api/assistente/analisar`.
@@ -11,7 +11,7 @@
 8. Front-end exibe recomendações, riscos e prioridade com rastreabilidade das tools.
 
 ## Contratos e qualidade
-- **Entrada mínima:** campos elétricos básicos + quantidades de PCS/BESS.
+- **Entrada mínima:** dados elétricos básicos + quantidades de PCS/BESS.
 - **Saída obrigatória:** `diagnostico`, `acoes_recomendadas`, `riscos`, `dados_faltantes`, `resumo_executivo`, `justificativa_tecnica`, `prioridade_execucao`.
 - **Rastreabilidade:** cada tool retorna `nome`, `status` e `saida`.
 - **Reprodutibilidade:** parâmetros do modelo retornam no payload da API.
