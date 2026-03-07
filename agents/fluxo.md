@@ -1,17 +1,23 @@
 # Fluxo de agente — versão revisada para professor
 
-1. Receber dados do projeto (frontend -> backend).
-2. Executar `validar_consistencia_projeto`.
-3. Executar `calcular_totais_instalados`.
-4. Executar `sugerir_layout_diagramas` com `modo` adequado (blocos/unifilar).
-5. Montar contexto técnico + system prompt.
-6. Chamar o LLM e exigir saída JSON estruturada.
-7. Validar JSON de resposta (schema/keys obrigatórias).
-8. Exibir recomendações com rastreabilidade (tools + justificativa).
-9. Opcional para apresentação: `gerar_resumo_apresentacao`.
+## Pipeline de execução
+1. Front-end envia `projeto` para `POST /api/assistente/analisar`.
+2. Backend executa `validar_consistencia_projeto`.
+3. Backend executa `calcular_totais_instalados`.
+4. Backend executa `sugerir_layout_diagramas`.
+5. Backend monta contexto técnico (`prompt + outputs das tools + metadados do modelo`).
+6. Orquestrador gera resposta estruturada (fallback determinístico nesta versão).
+7. Backend valida formato JSON obrigatório.
+8. Front-end exibe recomendações, riscos e prioridade com rastreabilidade das tools.
+
+## Contratos e qualidade
+- **Entrada mínima:** campos elétricos básicos + quantidades de PCS/BESS.
+- **Saída obrigatória:** `diagnostico`, `acoes_recomendadas`, `riscos`, `dados_faltantes`, `resumo_executivo`, `justificativa_tecnica`, `prioridade_execucao`.
+- **Rastreabilidade:** cada tool retorna `nome`, `status` e `saida`.
+- **Reprodutibilidade:** parâmetros do modelo retornam no payload da API.
 
 ## Métricas sugeridas para avaliação
-- Tempo de resposta (latência)
-- % de respostas com JSON válido
-- # inconsistências detectadas por projeto
-- # ajustes de layout sugeridos
+- Latência da rota `/api/assistente/analisar`.
+- `%` de respostas com JSON válido.
+- Número médio de inconsistências detectadas por projeto.
+- Quantidade de recomendações de layout acionadas por faixa de escala (pequeno/médio/grande).

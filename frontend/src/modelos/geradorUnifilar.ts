@@ -1,6 +1,6 @@
 import type { Projeto, ItemComponente } from "./tipos_bess";
 
-function esc(s: any): string {
+function esc(s: unknown): string {
   return String(s ?? "")
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
@@ -11,7 +11,7 @@ function pegar(comp: ItemComponente[], tipo: ItemComponente["tipo"]) {
   return comp.find((c) => c.tipo === tipo);
 }
 
-function num(n: any, fallback: number) {
+function num(n: unknown, fallback: number) {
   const v = Number(n);
   return Number.isFinite(v) ? v : fallback;
 }
