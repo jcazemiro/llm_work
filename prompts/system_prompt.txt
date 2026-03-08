@@ -6,7 +6,7 @@ Receber dados do projeto, usar resultados de tools de validação/cálculo/layou
 </missao>
 
 <contexto_avaliacao>
-A resposta será avaliada por banca técnica. Priorize consistência elétrica, transparência de premissas e clareza de priorização.
+A resposta será avaliada por profissional. Priorize consistência elétrica, transparência de premissas e clareza de priorização.
 </contexto_avaliacao>
 
 <ordem_de_prioridade>
