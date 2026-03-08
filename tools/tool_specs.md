@@ -1,134 +1,117 @@
-# Especificação de ferramentas (tools) — versão para avaliação final
+# Especificação de ferramentas (tools)
 
 ## Convenções gerais
-- Todas as tools devem receber JSON válido e retornar objeto com `status`, `output` e `trace_id`.
-- Em caso de erro de entrada, retornar `status="erro"` com `error_code`.
-- Todo valor numérico deve ser normalizado para `number`.
+- Cada tool retorna: `nome`, `status`, `trace_id`, `saida`.
+- `status`: `ok | alerta | erro`.
+- O backend deve incluir os outputs de tools na resposta final para rastreabilidade.
 
 ---
 
 ## 1) `validar_consistencia_projeto`
-**Objetivo:** verificar consistência elétrica e de parametrização mínima.
+**Objetivo:** validar consistência mínima de parâmetros elétricos.
 
-### Entrada (schema simplificado)
-```json
-{
-  "tensao_mt_kv": "number > 0",
-  "tensao_bt_kv": "number > 0",
-  "potencia_trafo_kva": "number > 0",
-  "pcs_quantidade": "integer >= 1",
-  "pcs_potencia_kw": "number > 0",
-  "bess_quantidade": "integer >= 1",
-  "bess_energia_kwh_total": "number > 0",
-  "bess_potencia_kw_total": "number > 0"
-}
-```
+### Entradas esperadas
+- `tensao_mt_kv`, `tensao_bt_kv`
+- `potencia_trafo_kva`
+- `pcs_quantidade`, `pcs_potencia_kw`
+- `bess_quantidade`, `bess_energia_kwh_total`, `bess_potencia_kw_total`
+
+### Regras
+- Erro se `MT <= BT`.
+- Erro se quantidades/energia/potência forem inválidas.
+- Alerta se `potência total PCS > 95%` da potência do trafo.
 
 ### Saída
 ```json
 {
+  "nome": "validar_consistencia_projeto",
   "status": "ok|alerta|erro",
-  "inconsistencias": ["string"],
-  "observacoes": ["string"],
-  "trace_id": "string"
+  "trace_id": "validar_xxxxxxxx",
+  "saida": {
+    "status": "ok|alerta|erro",
+    "inconsistencias": ["string"],
+    "observacoes": ["string"],
+    "trace_id": "validar_xxxxxxxx"
+  }
 }
 ```
-
-### Regras de validação
-- Erro se `tensao_mt_kv <= tensao_bt_kv`.
-- Alerta se `pcs_quantidade * pcs_potencia_kw > 95%` da potência do trafo.
-- Erro para valores não numéricos, nulos ou negativos.
 
 ---
 
 ## 2) `calcular_totais_instalados`
-**Objetivo:** consolidar totais para carimbo, resumo e validações cruzadas.
-
-### Entrada
-```json
-{
-  "pcs_quantidade": "integer >= 1",
-  "pcs_potencia_kw": "number > 0",
-  "bess_energia_kwh_total": "number > 0",
-  "bess_potencia_kw_total": "number > 0"
-}
-```
+**Objetivo:** consolidar totais para resumo técnico.
 
 ### Saída
 ```json
 {
+  "nome": "calcular_totais_instalados",
   "status": "ok",
-  "potencia_pcs_total_kw": "number",
-  "energia_bess_total_kwh": "number",
-  "potencia_bess_total_kw": "number",
-  "trace_id": "string"
+  "trace_id": "totais_xxxxxxxx",
+  "saida": {
+    "status": "ok",
+    "potencia_pcs_total_kw": "number",
+    "energia_bess_total_kwh": "number",
+    "potencia_bess_total_kw": "number",
+    "trace_id": "totais_xxxxxxxx"
+  }
 }
 ```
 
 ---
 
 ## 3) `sugerir_layout_diagramas`
-**Objetivo:** recomendar organização visual para diagrama de blocos e unifilar.
+**Objetivo:** recomendar melhorias de legibilidade para blocos/unifilar.
 
-### Entrada
-```json
-{
-  "quantidades": { "pcs": "integer", "bess": "integer" },
-  "limites_visuais": { "largura": "number", "altura": "number" },
-  "modo": "blocos|unifilar"
-}
-```
-
-### Saída
-```json
-{
-  "status": "ok",
-  "recomendacoes_layout": ["string"],
-  "agrupamentos": ["string"],
-  "limites_detectados": ["string"],
-  "trace_id": "string"
-}
-```
-
-### Regras de decisão
-- `pcs > 12`: sugerir subdivisão de barramento.
+### Regras
+- `pcs > 12`: sugerir divisão de barramento.
 - `bess > 8`: sugerir subgrupos por fileira/bloco.
-- Cenário simples: manter layout atual.
-
----
-
-## 4) `gerar_resumo_apresentacao`
-**Objetivo:** apoiar pitch de 3 minutos para avaliação.
-
-### Entrada
-```json
-{
-  "diagnostico": "string",
-  "acoes_recomendadas": ["string"],
-  "tradeoffs": ["string"]
-}
-```
+- Caso simples: manter layout atual.
 
 ### Saída
 ```json
 {
+  "nome": "sugerir_layout_diagramas",
   "status": "ok",
-  "elevator_pitch_30s": "string",
-  "decisoes_llm_2min": ["string"],
-  "riscos_30s": ["string"],
-  "trace_id": "string"
+  "trace_id": "layout_xxxxxxxx",
+  "saida": {
+    "status": "ok",
+    "recomendacoes_layout": ["string"],
+    "agrupamentos": ["string"],
+    "limites_detectados": ["string"],
+    "trace_id": "layout_xxxxxxxx"
+  }
 }
 ```
 
 ---
 
-## Contrato de integração backend LLM
-- Endpoint: `POST /api/assistente/analisar`
-- Pipeline: `input -> tools -> contexto -> resposta estruturada`
-- Modelo padrão na entrega atual: `deterministic-local` (fallback reproduzível).
-- Parâmetros versionados:
-  - `LLM_MODEL`
-  - `LLM_TEMPERATURE` (padrão 0.2)
-  - `LLM_TOP_P` (padrão 0.9)
+## Contrato de API backend
+- `GET /health`: verificação de serviço.
+- `GET /api/assistente/exemplo`: exemplo completo (projeto + tools + resposta).
+- `POST /api/assistente/analisar`: pipeline principal.
 
-Esse contrato garante que a banca consiga validar rastreabilidade mesmo sem chave de API externa.
+### Saída do endpoint de análise
+```json
+{
+  "modelo": {
+    "provider": "deterministic-local",
+    "model": "rule-engine-v2",
+    "temperature": 0.2,
+    "top_p": 0.9
+  },
+  "tools_executadas": ["..."],
+  "resposta": {
+    "diagnostico": "string",
+    "acoes_recomendadas": ["string"],
+    "riscos": ["string"],
+    "dados_faltantes": ["string"],
+    "resumo_executivo": "string",
+    "justificativa_tecnica": ["string"],
+    "prioridade_execucao": [
+      { "item": "string", "prioridade": "alta|media|baixa" }
+    ]
+  }
+}
+```
+
+> Observação: antes de responder ao cliente, o backend valida o schema de `resposta`.

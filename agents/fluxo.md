@@ -1,23 +1,24 @@
-# Fluxo de agente — versão revisada
+# Fluxo de agente
 
-## Pipeline de execução
-1. Front-end envia `projeto` para `POST /api/assistente/analisar`.
-2. Backend executa `validar_consistencia_projeto`.
-3. Backend executa `calcular_totais_instalados`.
-4. Backend executa `sugerir_layout_diagramas`.
-5. Backend monta contexto técnico (`prompt + outputs das tools + metadados do modelo`).
-6. Orquestrador gera resposta estruturada (fallback determinístico nesta versão).
-7. Backend valida formato JSON obrigatório.
-8. Front-end exibe recomendações, riscos e prioridade com rastreabilidade das tools.
+## Pipeline principal (`POST /api/assistente/analisar`)
+1. Receber `projeto` do frontend.
+2. Executar `validar_consistencia_projeto`.
+3. Executar `calcular_totais_instalados`.
+4. Executar `sugerir_layout_diagramas`.
+5. Montar resposta estruturada (modo determinístico auditável nesta versão).
+6. Validar schema final antes de retornar ao cliente.
+7. Retornar `modelo + tools_executadas + resposta`.
 
-## Contratos e qualidade
-- **Entrada mínima:** campos elétricos básicos + quantidades de PCS/BESS.
-- **Saída obrigatória:** `diagnostico`, `acoes_recomendadas`, `riscos`, `dados_faltantes`, `resumo_executivo`, `justificativa_tecnica`, `prioridade_execucao`.
-- **Rastreabilidade:** cada tool retorna `nome`, `status` e `saida`.
-- **Reprodutibilidade:** parâmetros do modelo retornam no payload da API.
+## Endpoint de referência
+- `GET /api/assistente/exemplo`: retorna payload completo.
 
-## Métricas sugeridas para avaliação
-- Latência da rota `/api/assistente/analisar`.
-- `%` de respostas com JSON válido.
-- Número médio de inconsistências detectadas por projeto.
-- Quantidade de recomendações de layout acionadas por faixa de escala (pequeno/médio/grande).
+## Controles de qualidade
+- `trace_id` por tool para rastreabilidade.
+- Rejeição de resposta fora do schema obrigatório.
+- Priorização explícita de inconsistências técnicas na saída.
+
+## Métricas sugeridas
+- latência do endpoint;
+- percentual de JSON válido;
+- inconsistências médias por cenário;
+- taxa de acionamento de recomendações de layout (escala pequena/média/grande).
