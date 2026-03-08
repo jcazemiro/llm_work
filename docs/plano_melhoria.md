@@ -1,7 +1,7 @@
 # Plano de melhoria para uma entrega aceitável: uma análise conjunta de identificação de erros e aprendizados do universo que é a LLM. Aqui segue de forma colaborativa para identificar a estrutura básica, e seguir com as implementações para algo que planejo ser para além da disciplina.
 
-## Diagnóstico da correção do professor:
-Pontuação atual: **70/100**. O principal gargalo está nos critérios de IA aplicada, algo que identifico com principal ponto de dificuldade pessoal.
+## Diagnóstico da correção e reflexão dos principais pontos indicados pelo professor:
+O principal gargalo está nos critérios de IA aplicada, algo que identifico com principal ponto de dificuldade pessoal.
 - System Prompt e Prompting: 6/18
 - Ferramentas (Tools): 3/14
 - Parâmetros do Modelo: 4/10
