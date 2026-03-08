@@ -1,4 +1,4 @@
-# Fluxo de agente — versão avaliação v2
+# Fluxo de agente
 
 ## Pipeline principal (`POST /api/assistente/analisar`)
 1. Receber `projeto` do frontend.
@@ -10,7 +10,7 @@
 7. Retornar `modelo + tools_executadas + resposta`.
 
 ## Endpoint de referência
-- `GET /api/assistente/exemplo`: retorna payload completo para demonstração em banca.
+- `GET /api/assistente/exemplo`: retorna payload completo.
 
 ## Controles de qualidade
 - `trace_id` por tool para rastreabilidade.

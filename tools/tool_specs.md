@@ -1,4 +1,4 @@
-# Especificação de ferramentas (tools) — versão avaliação v2
+# Especificação de ferramentas (tools)
 
 ## Convenções gerais
 - Cada tool retorna: `nome`, `status`, `trace_id`, `saida`.

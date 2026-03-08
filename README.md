@@ -58,7 +58,7 @@ Referência: `tools/tool_specs.md`.
 
 ---
 
-## 3.1) Mapa rápido para critérios do professor
+## 3.1) Mapa rápido de análise e reflexão:
 
 - **System prompt e prompting (18 pts):** prompt estruturado com regras, few-shot e JSON obrigatório em `prompts/system_prompt.txt`.
 - **Tools e integração (14 pts):** contrato em `tools/tool_specs.md` e execução real no backend.
@@ -110,7 +110,7 @@ Referência: `tools/tool_specs.md`.
 ├── agents/
 │   └── fluxo.md
 ├── docs/
-│   └── plano_melhoria_nota_minima.md
+│   └── plano_melhoria.md
 ├── frontend/
 └── backend/
 ```
@@ -152,13 +152,7 @@ npm --prefix backend install
 npm --prefix backend start
 ```
 
-### Front-end
-```bash
-npm --prefix frontend install
-npm --prefix frontend run dev
-```
-
-### Build do front
+### Build front
 ```bash
 npm --prefix frontend run build
 ```
