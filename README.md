@@ -1,93 +1,176 @@
 # Trabalho Final — IA Generativa aplicada a Diagramas Unifilares BESS
 
-Aplicação web para pré-projeto de sistemas BESS com geração de unifilar e camada de análise assistida por LLM (modo determinístico auditável nesta versão).
+Este repositório contém uma aplicação web para geração de **diagramas unifilares preliminares** de sistemas BESS (Battery Energy Storage System), com foco em evoluir para um **copiloto com IA generativa** para apoio de pré-projeto elétrico.
 
-## 1) Objetivo acadêmico
-Melhorar a entrega nos critérios de avaliação:
-1. System Prompt e Prompting
-2. Ferramentas (Tools)
-3. Parâmetros do Modelo
-4. Arquitetura e Framework
-5. README e Documentação
+## 1) Problema e solução
 
-## 2) O que está implementado hoje
-- **Frontend (React + Vite):** construtor de projeto, unifilar preliminar e tela do Assistente IA.
-- **Backend (Express):** pipeline tools-first em `POST /api/assistente/analisar`.
-- **Prompt estruturado:** `prompts/system_prompt.txt` com XML-tags, regras, few-shot e JSON obrigatório.
-- **Contrato de tools/API:** `tools/tool_specs.md`.
+### Problema
+Na etapa de pré-projeto, o unifilar costuma ser feito manualmente e iterado várias vezes. Isso gera retrabalho e aumenta o risco de inconsistências entre:
+- quantidades de PCS/BESS,
+- potência/energia total,
+- distribuição em grupos funcionais (MT, transformação, BT),
+- legibilidade do diagrama para revisão técnica.
 
-## 3) Arquitetura (versão atual)
-`Frontend -> Backend -> Tools (validação/cálculo/layout) -> Resposta estruturada -> UI`
+### Solução proposta
+A aplicação permite:
+1. configurar parâmetros do projeto (trafo, PCS, BESS),
+2. gerar o unifilar preliminar automaticamente em SVG,
+3. executar análise assistida (pipeline tools-first) para recomendar ajustes técnicos e de legibilidade.
 
-Detalhe do fluxo: `agents/fluxo.md`.
+---
 
-## 4) Prompt estruturado (resumo)
-O prompt contém:
-- papel técnico explícito;
-- prioridades de decisão;
-- regras de segurança (`DADO INSUFICIENTE`, sem norma sem fonte);
-- protocolo de uso das tools;
-- formato JSON obrigatório;
-- few-shot positivo/negativo.
+## 2) Estado atual do projeto (implementado)
 
-Arquivo completo: `prompts/system_prompt.txt`.
+- Front-end React + Vite para edição de parâmetros e visualização.
+- Geração de unifilar em SVG com grupos principais:
+  - Grupo 1: Cabine MT / Rede
+  - Grupo 2: Transformação
+  - Grupo 3: Distribuição BT / PCS / BESS
+- Renderização escalável para múltiplos PCS/BESS.
+- Página de Assistente IA com diagnóstico estruturado.
+- Backend Express com endpoint de análise:
+  - `GET /health`
+  - `GET /api/assistente/exemplo`
+  - `POST /api/assistente/analisar`
 
-## 5) Decisões de engenharia do modelo
-- `temperature=0.2`: reduz variabilidade para tarefa técnica.
-- `top_p=0.9`: mantém cobertura sem perder consistência.
-- provider padrão: `deterministic-local` (reprodutível sem chave externa).
-- retorno da API inclui os parâmetros para auditoria.
+---
 
-## 6) Pontos fracos atuais (foco da avaliação)
-1. **Sem chamada real a provedor LLM externo** (pipeline ainda determinístico).
-2. **Validação elétrica ainda básica** (não cobre normas detalhadas).
-3. **Sem suíte automatizada de testes de API** (há testes manuais por curl).
-4. **Frontend Assistente IA ainda usa lógica local** e pode divergir do backend se não integrado totalmente.
+## 3) Arquitetura de LLM (versão da entrega)
 
-Esses pontos são importantes para explicar transparência na banca: o que já está pronto vs. o que está planejado.
+Fluxo implementado:
 
-## 7) Exemplo de como está ficando (resultado real da API)
-Com backend rodando, execute:
+`Entrada do usuário -> Backend -> Tools -> Resposta estruturada (JSON) -> Frontend`
 
-```bash
-curl -s http://localhost:8787/api/assistente/exemplo | jq '.resposta'
+### Componentes
+- **Front-end**: coleta dados, mostra recomendações e exibe diagrama.
+- **Camada de orquestração (backend)**:
+  - executa validações e cálculos (tools),
+  - monta resposta técnica estruturada,
+  - valida schema antes de responder.
+- **Gerador SVG**: converte parâmetros do projeto em diagrama visual.
+
+### Tools do pipeline
+1. `validar_consistencia_projeto`
+2. `calcular_totais_instalados`
+3. `sugerir_layout_diagramas`
+
+Referência: `tools/tool_specs.md`.
+
+---
+
+## 3.1) Mapa rápido para critérios do professor
+
+- **System prompt e prompting (18 pts):** prompt estruturado com regras, few-shot e JSON obrigatório em `prompts/system_prompt.txt`.
+- **Tools e integração (14 pts):** contrato em `tools/tool_specs.md` e execução real no backend.
+- **Parâmetros/modelo (10 pts):** parâmetros retornados na API (`temperature`, `top_p`, `provider`, `model`) e justificados na documentação.
+- **Arquitetura/framework (10 pts):** fluxo em `agents/fluxo.md` + endpoints e validação de schema no backend.
+- **README/documentação (10 pts):** este README, contratos e plano de melhoria.
+- **Apresentação oral (8 pts):** use o endpoint `/api/assistente/exemplo` para demonstrar saída estruturada ao vivo.
+
+---
+
+## 4) Decisões de engenharia de LLM
+
+## 4.1 Modelo
+- Versão atual: `deterministic-local` (reprodutível, sem chave externa).
+- Evolução planejada: integrar provedor LLM real (OpenAI/Ollama/vLLM) com mesmo contrato de saída.
+
+**Justificativa:**
+- Reprodutibilidade e estabilidade para avaliação acadêmica inicial.
+- Facilidade de auditoria das decisões e das saídas.
+
+## 4.2 Framework / Orquestração
+- Estratégia atual: backend direto com pipeline explícito de tools (simples e auditável).
+- Evolução opcional: migrar para framework de agentes se fluxo ficar mais complexo.
+
+**Trade-off:** menor complexidade agora para maximizar confiabilidade e explicabilidade na banca.
+
+## 4.3 Parâmetros atuais
+- `temperature = 0.2` para consistência técnica.
+- `top_p = 0.9` para manter cobertura sem excesso de aleatoriedade.
+- Estes parâmetros são retornados na API para rastreabilidade.
+
+## 4.4 Estratégia de prompting
+- Prompt com papel técnico explícito.
+- Formato estruturado em tags + regras de segurança.
+- Saída JSON obrigatória (schema fixo).
+- Few-shot com cenário consistente e inconsistente.
+
+---
+
+## 5) Estrutura do repositório
+
+```text
+.
+├── README.md
+├── prompts/
+│   └── system_prompt.txt
+├── tools/
+│   └── tool_specs.md
+├── agents/
+│   └── fluxo.md
+├── docs/
+│   └── plano_melhoria_nota_minima.md
+├── frontend/
+└── backend/
 ```
 
-Você verá um JSON estruturado com:
-- `diagnostico`
-- `acoes_recomendadas`
-- `riscos`
-- `dados_faltantes`
-- `resumo_executivo`
-- `justificativa_tecnica`
-- `prioridade_execucao`
+---
 
-## 8) Como rodar localmente
+## 6) O que funcionou até agora
+
+- Geração automática de unifilar preliminar baseada em parâmetros do projeto.
+- Organização visual em grupos com melhor legibilidade para revisão.
+- Pipeline backend com tools e resposta estruturada.
+- Endpoint de exemplo para demonstração (`/api/assistente/exemplo`).
+- Validação de schema da resposta antes do retorno no endpoint de análise.
+
+## 7) O que ainda é ponto fraco / limitações
+
+- Ainda não há integração com provedor LLM externo (pipeline atual determinístico).
+- Validação elétrica ainda básica (não substitui análise normativa detalhada).
+- Frontend e backend ainda podem evoluir para integração 100% online em todos os fluxos da UI.
+- Falta suíte automatizada de testes de API (atualmente validação principal via comandos manuais).
+
+---
+
+## 8) Próximos passos recomendados
+
+1. Integrar chamada real a LLM mantendo o mesmo schema de saída.
+2. Automatizar testes para cenários: válido, alerta e erro.
+3. Conectar totalmente a tela Assistente IA ao endpoint backend de análise.
+4. Incluir métricas: latência, taxa de JSON válido e inconsistências detectadas.
+5. Preparar pitch de 3 minutos focado em decisões de engenharia de LLM.
+
+---
+
+## 9) Como rodar
+
 ### Backend
 ```bash
 npm --prefix backend install
 npm --prefix backend start
 ```
 
-### Frontend
+### Front-end
 ```bash
 npm --prefix frontend install
 npm --prefix frontend run dev
 ```
 
-### Verificações
+### Build do front
 ```bash
-npm --prefix frontend run lint
 npm --prefix frontend run build
-curl -s http://localhost:8787/health
-curl -s http://localhost:8787/api/assistente/exemplo | jq '.tools_executadas | length'
 ```
 
-## 9) Próximos passos recomendados
-1. Integrar frontend Assistente IA consumindo `POST /api/assistente/analisar`.
-2. Incluir testes automatizados para cenários: válido, alerta e erro.
-3. Adicionar comparação entre modelo determinístico e modelo LLM real.
-4. Medir métricas: latência, JSON válido, inconsistências detectadas por cenário.
+### Checks rápidos
+```bash
+curl -s http://localhost:8787/health
+curl -s http://localhost:8787/api/assistente/exemplo | jq '.resposta'
+```
+
+---
 
 ## 10) Aviso técnico
-Resultado de pré-projeto para apoio didático. Não substitui validação por profissional habilitado e normas aplicáveis.
+
+Este projeto gera **diagrama preliminar** para apoio de engenharia e avaliação acadêmica. Qualquer dimensionamento final deve ser validado por profissional habilitado e normas aplicáveis.
