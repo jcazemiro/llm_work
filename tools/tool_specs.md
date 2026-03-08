@@ -1,70 +1,117 @@
-# Especificação de ferramentas (tools) — versão para avaliação final
+# Especificação de ferramentas (tools) — versão avaliação v2
 
-## 1) validar_consistencia_projeto
-**Objetivo:** verificar consistência elétrica e de parametrização mínima.
-
-### Entrada
-- `tensao_mt_kv: number`
-- `tensao_bt_kv: number`
-- `potencia_trafo_kva: number`
-- `pcs_quantidade: number`
-- `pcs_potencia_kw: number`
-- `bess_quantidade: number`
-- `bess_energia_kwh_total: number`
-- `bess_potencia_kw_total: number`
-
-### Saída
-- `status: "ok" | "alerta" | "erro"`
-- `inconsistencias: string[]`
-- `observacoes: string[]`
-
-### Falhas esperadas
-- Entrada não numérica
-- Valores nulos/negativos
-- MT <= BT
+## Convenções gerais
+- Cada tool retorna: `nome`, `status`, `trace_id`, `saida`.
+- `status`: `ok | alerta | erro`.
+- O backend deve incluir os outputs de tools na resposta final para rastreabilidade.
 
 ---
 
-## 2) calcular_totais_instalados
-**Objetivo:** consolidar totais para carimbo, resumo e validações cruzadas.
+## 1) `validar_consistencia_projeto`
+**Objetivo:** validar consistência mínima de parâmetros elétricos.
 
-### Entrada
-- `pcs_quantidade: number`
-- `pcs_potencia_kw: number`
-- `bess_energia_kwh_total: number`
-- `bess_potencia_kw_total: number`
+### Entradas esperadas
+- `tensao_mt_kv`, `tensao_bt_kv`
+- `potencia_trafo_kva`
+- `pcs_quantidade`, `pcs_potencia_kw`
+- `bess_quantidade`, `bess_energia_kwh_total`, `bess_potencia_kw_total`
+
+### Regras
+- Erro se `MT <= BT`.
+- Erro se quantidades/energia/potência forem inválidas.
+- Alerta se `potência total PCS > 95%` da potência do trafo.
 
 ### Saída
-- `potencia_pcs_total_kw: number`
-- `energia_bess_total_kwh: number`
-- `potencia_bess_total_kw: number`
+```json
+{
+  "nome": "validar_consistencia_projeto",
+  "status": "ok|alerta|erro",
+  "trace_id": "validar_xxxxxxxx",
+  "saida": {
+    "status": "ok|alerta|erro",
+    "inconsistencias": ["string"],
+    "observacoes": ["string"],
+    "trace_id": "validar_xxxxxxxx"
+  }
+}
+```
 
 ---
 
-## 3) sugerir_layout_diagramas
-**Objetivo:** recomendar organização visual para diagrama de blocos e unifilar.
-
-### Entrada
-- `quantidades: { pcs: number, bess: number }`
-- `limites_visuais: { largura: number, altura: number }`
-- `modo: "blocos" | "unifilar"`
+## 2) `calcular_totais_instalados`
+**Objetivo:** consolidar totais para resumo técnico.
 
 ### Saída
-- `recomendacoes_layout: string[]`
-- `agrupamentos: string[]`
-- `limites_detectados: string[]`
+```json
+{
+  "nome": "calcular_totais_instalados",
+  "status": "ok",
+  "trace_id": "totais_xxxxxxxx",
+  "saida": {
+    "status": "ok",
+    "potencia_pcs_total_kw": "number",
+    "energia_bess_total_kwh": "number",
+    "potencia_bess_total_kw": "number",
+    "trace_id": "totais_xxxxxxxx"
+  }
+}
+```
 
 ---
 
-## 4) gerar_resumo_apresentacao
-**Objetivo:** apoiar pitch de 3 minutos para avaliação.
+## 3) `sugerir_layout_diagramas`
+**Objetivo:** recomendar melhorias de legibilidade para blocos/unifilar.
 
-### Entrada
-- `diagnostico`
-- `acoes_recomendadas`
-- `tradeoffs`
+### Regras
+- `pcs > 12`: sugerir divisão de barramento.
+- `bess > 8`: sugerir subgrupos por fileira/bloco.
+- Caso simples: manter layout atual.
 
 ### Saída
-- `elevator_pitch_30s: string`
-- `decisoes_llm_2min: string[]`
-- `riscos_30s: string[]`
+```json
+{
+  "nome": "sugerir_layout_diagramas",
+  "status": "ok",
+  "trace_id": "layout_xxxxxxxx",
+  "saida": {
+    "status": "ok",
+    "recomendacoes_layout": ["string"],
+    "agrupamentos": ["string"],
+    "limites_detectados": ["string"],
+    "trace_id": "layout_xxxxxxxx"
+  }
+}
+```
+
+---
+
+## Contrato de API backend
+- `GET /health`: verificação de serviço.
+- `GET /api/assistente/exemplo`: exemplo completo (projeto + tools + resposta).
+- `POST /api/assistente/analisar`: pipeline principal.
+
+### Saída do endpoint de análise
+```json
+{
+  "modelo": {
+    "provider": "deterministic-local",
+    "model": "rule-engine-v2",
+    "temperature": 0.2,
+    "top_p": 0.9
+  },
+  "tools_executadas": ["..."],
+  "resposta": {
+    "diagnostico": "string",
+    "acoes_recomendadas": ["string"],
+    "riscos": ["string"],
+    "dados_faltantes": ["string"],
+    "resumo_executivo": "string",
+    "justificativa_tecnica": ["string"],
+    "prioridade_execucao": [
+      { "item": "string", "prioridade": "alta|media|baixa" }
+    ]
+  }
+}
+```
+
+> Observação: antes de responder ao cliente, o backend valida o schema de `resposta`.
