@@ -1,4 +1,4 @@
-# Fluxo de agente — versão avaliação v2
+# Fluxo de agente
 
 ## Pipeline principal (`POST /api/assistente/analisar`)
 1. Receber `projeto` do frontend.

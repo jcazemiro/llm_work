@@ -35,7 +35,7 @@ A aplicação permite:
 
 ---
 
-## 3) Arquitetura de LLM (versão da entrega)
+## 3) Arquitetura de LLM:
 
 Fluxo implementado:
 
@@ -58,14 +58,12 @@ Referência: `tools/tool_specs.md`.
 
 ---
 
-## 3.1) Mapa rápido para critérios do professor
-
-- **System prompt e prompting (18 pts):** prompt estruturado com regras, few-shot e JSON obrigatório em `prompts/system_prompt.txt`.
-- **Tools e integração (14 pts):** contrato em `tools/tool_specs.md` e execução real no backend.
-- **Parâmetros/modelo (10 pts):** parâmetros retornados na API (`temperature`, `top_p`, `provider`, `model`) e justificados na documentação.
-- **Arquitetura/framework (10 pts):** fluxo em `agents/fluxo.md` + endpoints e validação de schema no backend.
-- **README/documentação (10 pts):** este README, contratos e plano de melhoria.
-- **Apresentação oral (8 pts):** use o endpoint `/api/assistente/exemplo` para demonstrar saída estruturada ao vivo.
+- **System prompt e prompting:** prompt estruturado com regras, few-shot e JSON obrigatório em `prompts/system_prompt.txt`.
+- **Tools e integração:** contrato em `tools/tool_specs.md` e execução real no backend.
+- **Parâmetros/modelo:** parâmetros retornados na API (`temperature`, `top_p`, `provider`, `model`) e justificados na documentação.
+- **Arquitetura/framework:** fluxo em `agents/fluxo.md` + endpoints e validação de schema no backend.
+- **README/documentação:** este README, contratos e plano de melhoria.
+- **Apresentação:** apresentação oral não é mais possível, entretando a ideia é deixar a aplicação rodando para facilitar a avaliação do professor. Utilizar o endpoint `/api/assistente/exemplo` para demonstrar saída estruturada.
 
 ---
 
@@ -115,7 +113,7 @@ Referência: `tools/tool_specs.md`.
 ├── agents/
 │   └── fluxo.md
 ├── docs/
-│   └── plano_melhoria_nota_minima.md
+│   └── plano_melhoria.md
 ├── frontend/
 └── backend/
 ```
@@ -145,7 +143,7 @@ Referência: `tools/tool_specs.md`.
 2. Automatizar testes para cenários: válido, alerta e erro.
 3. Conectar totalmente a tela Assistente IA ao endpoint backend de análise.
 4. Incluir métricas: latência, taxa de JSON válido e inconsistências detectadas.
-5. Preparar pitch de 3 minutos focado em decisões de engenharia de LLM.
+
 
 ---
 
@@ -159,8 +157,8 @@ npm --prefix backend start
 
 ### Front-end
 ```bash
-npm --prefix frontend install
-npm --prefix frontend run dev
+npm --prefix backend install
+npm --prefix backend start
 ```
 
 ### Build do front
