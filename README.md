@@ -58,8 +58,6 @@ Referência: `tools/tool_specs.md`.
 
 ---
 
-## 3.1) Mapa rápido de análise e reflexão:
-
 - **System prompt e prompting:** prompt estruturado com regras, few-shot e JSON obrigatório em `prompts/system_prompt.txt`.
 - **Tools e integração:** contrato em `tools/tool_specs.md` e execução real no backend.
 - **Parâmetros/modelo:** parâmetros retornados na API (`temperature`, `top_p`, `provider`, `model`) e justificados na documentação.
@@ -97,6 +95,11 @@ Referência: `tools/tool_specs.md`.
 - Few-shot com cenário consistente e inconsistente.
 
 ---
+
+
+### 4.5 Evolução por etapas (review)
+- **Etapa 1 (concluída):** reestruturação do System Prompt com XML tags, few-shot ampliado, política de CoT privado e rubrica de qualidade.
+- Evidência: `docs/prompt_engineering_etapa1.md`.
 
 ## 5) Estrutura do repositório
 
@@ -140,7 +143,7 @@ Referência: `tools/tool_specs.md`.
 2. Automatizar testes para cenários: válido, alerta e erro.
 3. Conectar totalmente a tela Assistente IA ao endpoint backend de análise.
 4. Incluir métricas: latência, taxa de JSON válido e inconsistências detectadas.
-5. Preparar apresentação.
+
 
 ---
 
@@ -152,9 +155,32 @@ npm --prefix backend install
 npm --prefix backend start
 ```
 
-### Build front
+### Front-end
+```bash
+npm --prefix backend install
+npm --prefix backend start
+```
+
+### Build do front
 ```bash
 npm --prefix frontend run build
+```
+
+
+### Deploy rápido no Railway (monorepo)
+Se aparecer o erro **"Error creating build plan with Railpack"**, use a configuração já incluída no repositório:
+- `railway.json` na raiz com build/start explícitos para `backend/`
+- `Procfile` com comando web de fallback
+
+No serviço Railway:
+1. Se o **Root Directory** estiver na raiz do repositório, o `railway.json` da raiz já resolve build/start.
+2. Se o **Root Directory** estiver em `backend`, use `backend/railway.json` (incluído) e `backend/Procfile`.
+3. Faça redeploy.
+4. Teste:
+```bash
+curl -s https://SEU_DOMINIO_RAILWAY/
+curl -s https://SEU_DOMINIO_RAILWAY/health
+curl -s https://SEU_DOMINIO_RAILWAY/api/assistente/exemplo
 ```
 
 ### Checks rápidos

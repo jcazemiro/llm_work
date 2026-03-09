@@ -4,6 +4,7 @@ const crypto = require("crypto");
 
 const app = express();
 const port = Number(process.env.PORT || 8787);
+const PROMPT_VERSION = "v3.0";
 
 app.use(cors());
 app.use(express.json({ limit: "1mb" }));
@@ -186,6 +187,20 @@ function validarSchemaResposta(resposta) {
   );
 }
 
+
+app.get("/", (_req, res) => {
+  res.json({
+    status: "ok",
+    servico: "assistente-bess-backend",
+    mensagem: "API online. Use /health, /api/assistente/exemplo e POST /api/assistente/analisar.",
+    endpoints: {
+      health: "/health",
+      exemplo: "/api/assistente/exemplo",
+      analisar: "/api/assistente/analisar"
+    }
+  });
+});
+
 app.get("/health", (_req, res) => {
   res.json({ status: "ok" });
 });
@@ -208,7 +223,7 @@ app.get("/api/assistente/exemplo", (_req, res) => {
   const t3 = sugerirLayoutDiagramas(projetoExemplo);
   const resposta = gerarRespostaDeterministica(projetoExemplo, [t1, t2, t3]);
 
-  return res.json({ projeto: projetoExemplo, tools_executadas: [t1, t2, t3], resposta });
+  return res.json({ projeto: projetoExemplo, prompt_version: PROMPT_VERSION, tools_executadas: [t1, t2, t3], resposta });
 });
 
 app.post("/api/assistente/analisar", (req, res) => {
@@ -233,6 +248,7 @@ app.post("/api/assistente/analisar", (req, res) => {
       model: process.env.LLM_MODEL || "rule-engine-v2",
       temperature: Number(process.env.LLM_TEMPERATURE || 0.2),
       top_p: Number(process.env.LLM_TOP_P || 0.9),
+      prompt_version: PROMPT_VERSION,
     },
     tools_executadas: [t1, t2, t3],
     resposta,

@@ -10,7 +10,7 @@
 7. Retornar `modelo + tools_executadas + resposta`.
 
 ## Endpoint de referência
-- `GET /api/assistente/exemplo`: retorna payload completo.
+- `GET /api/assistente/exemplo`: retorna payload completo para demonstração em banca.
 
 ## Controles de qualidade
 - `trace_id` por tool para rastreabilidade.
