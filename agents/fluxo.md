@@ -1,17 +1,24 @@
-# Fluxo de agente — versão revisada para professor
+# Fluxo de agente — versão avaliação v2
 
-1. Receber dados do projeto (frontend -> backend).
+## Pipeline principal (`POST /api/assistente/analisar`)
+1. Receber `projeto` do frontend.
 2. Executar `validar_consistencia_projeto`.
 3. Executar `calcular_totais_instalados`.
-4. Executar `sugerir_layout_diagramas` com `modo` adequado (blocos/unifilar).
-5. Montar contexto técnico + system prompt.
-6. Chamar o LLM e exigir saída JSON estruturada.
-7. Validar JSON de resposta (schema/keys obrigatórias).
-8. Exibir recomendações com rastreabilidade (tools + justificativa).
-9. Opcional para apresentação: `gerar_resumo_apresentacao`.
+4. Executar `sugerir_layout_diagramas`.
+5. Montar resposta estruturada (modo determinístico auditável nesta versão).
+6. Validar schema final antes de retornar ao cliente.
+7. Retornar `modelo + tools_executadas + resposta`.
 
-## Métricas sugeridas para avaliação
-- Tempo de resposta (latência)
-- % de respostas com JSON válido
-- # inconsistências detectadas por projeto
-- # ajustes de layout sugeridos
+## Endpoint de referência
+- `GET /api/assistente/exemplo`: retorna payload completo para demonstração em banca.
+
+## Controles de qualidade
+- `trace_id` por tool para rastreabilidade.
+- Rejeição de resposta fora do schema obrigatório.
+- Priorização explícita de inconsistências técnicas na saída.
+
+## Métricas sugeridas
+- latência do endpoint;
+- percentual de JSON válido;
+- inconsistências médias por cenário;
+- taxa de acionamento de recomendações de layout (escala pequena/média/grande).

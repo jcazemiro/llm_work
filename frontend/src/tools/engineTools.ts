@@ -3,7 +3,7 @@ import type { Projeto } from "../modelos/tipos_bess";
 export interface ResultadoTool {
   nome: string;
   status: "ok" | "alerta" | "erro";
-  saida: Record<string, any>;
+  saida: Record<string, unknown>;
 }
 
 function pegar(projeto: Projeto, tipo: string) {
